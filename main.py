@@ -29,12 +29,15 @@ df = pd.DataFrame(result)
 df.columns = ['Name', 'Ticker', 'Price $', 'Market Return YTD %', 'Market Return 1Y%', 'Market Return 3Y%',
               'Fair Value Uncertainty Rating', 'Fair Value $', 'Morning Star Value Rating']
 
-df['Price $'] = df['Price $'].str.strip().replace("\u2014", 0).replace("\u2212", "-").astype('float')
-# df['Market Return YTD %'] = df['Market Return YTD %'].str.strip().replace("-", "-").replace("—", "").astype('float')
-# df['Market Return 1Y%'] = df['Market Return 1Y%'].apply(lambda x: float(x.split()[0].replace('\U00002013', '-')))
-# df['Market Return 3Y%'] = df['Market Return 3Y%'].apply(lambda x: float(x.split()[0].replace('\U00002013', '-')))
-df['Fair Value $'] = df['Fair Value $'].str.strip().replace("<", "").replace("-", "-").astype('float')
-
+df['Price $'] = df['Price $'].astype('str').str.strip().replace("\u2014", 0).replace("\u2212", "-").astype('float')
+df['Market Return YTD %'] = df['Market Return YTD %'].astype('str').str.replace("\u2212", "")
+df['Market Return YTD %'] = pd.to_numeric(df['Market Return YTD %'], errors='coerce')
+df['Market Return 1Y%'] = df['Market Return 1Y%'].astype('str').str.replace("-", "")
+df['Market Return 1Y%'] = pd.to_numeric(df['Market Return 1Y%'], errors='coerce')
+df['Market Return 3Y%'] = df['Market Return 3Y%'].astype('str').str.replace("-", "")
+df['Market Return 3Y%'] = pd.to_numeric(df['Market Return 3Y%'], errors='coerce')
+df['Fair Value $'] = df['Fair Value $'].astype('str').str.strip().replace("<", "").replace("-", "-").astype('float')
+print(df.info())
 
 datatoexcel = pd.ExcelWriter('Small_Cap_Growth_Stocks.xlsx')
 
